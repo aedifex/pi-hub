@@ -18,7 +18,7 @@ from data_model import user_name
 
 
 from order_manager import select_food
-from order_manager import display_shoppihg_cart
+from order_manager import display_shopping_cart
 from order_manager import clear_shopping_cart
 from order_manager import check_out
 
@@ -134,7 +134,7 @@ def process_command(selection):
         print_restaurant_menu()
         press_enter_to_continue()
     elif selection == 2:
-        display_shoppihg_cart()
+        display_shopping_cart()
     elif selection == 3:
         clear_shopping_cart()
     elif selection == 4:
