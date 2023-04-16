@@ -31,10 +31,15 @@ def select_food():
     print_restaurant_menu()
     food_item = get_cmd_selection(4)
     quantity  = get_quantity("Please enter the quantity")
-    if food_item in order_cart:
-        order_cart[food_item] += quantity
+
+    #validates and ensure the quantity is greater than zero
+    if quantity <= 0:
+        print("Invalid quantity. Enter a valid quantity.")
     else:
-        order_cart[food_item] = quantity
+        if food_item in order_cart:
+            order_cart[food_item] += quantity
+        else:
+            order_cart[food_item] = quantity
 
 def display_shopping_cart():
     """
@@ -50,18 +55,21 @@ def display_shopping_cart():
     print_message("\n        Shopping Cart")
     # The format string used for printing the header and the menu item
     format_str = "        | {:<4}| {:<12}| {:<10}| {:<8}| {:<10}| {:<18} |"
-    print("        "+"-"*75)
+    print("        "+"-"*76)
     # The header for the menu
     print (format_str.format('Key', 'Item','Quantity', 'Price','Subtotal','Preparation Time'))
-    print("        "+"-"*75)
+    print("        "+"-"*76)
 
-    for m_key, quantity in order_cart.items():
+    # Sorting the list of items in the cart by m_key
+    sorted_items = sorted(order_cart.items(), key=lambda x: x[0])
+
+    for m_key, quantity in sorted_items:
         m_item         = menu_items[m_key-1]['Name']
         m_price        = "{:>8}".format("${:.2f}".format(menu_items[m_key-1]['Price']))
         m_subtotal     = "{:>8}".format("${:.2f}".format(menu_items[m_key-1]['Price']*quantity))
         m_prep_time    = f"{menu_items[m_key-1]['PrepTime']*quantity:4} mins"
         print (format_str.format(m_key, m_item, quantity, m_price, m_subtotal, m_prep_time))
-    print("        "+"-"*75)
+    print("        "+"-"*76)
     print_message("      *** All Discounts will be applied at the checkout ***.\n")
     #press_enter_to_continue()
 
@@ -110,7 +118,7 @@ def delete_item_shopping_cart():
                 qty = int(input("\n            Enter the quantity to remove: "))
                 orig_qty = order_cart.get(r_item, 0)
                 if qty < 0 or qty > orig_qty:
-                    print("\n            *** Quantity is incorrect. Try again. ***")
+                    print("\n            *** No update. Quantity entered is incorrect. Try again. ***")
                 elif qty == orig_qty:
                     del order_cart[r_item]
                     print("            *** Below is the UPDATED Shopping Cart. ***")
@@ -123,6 +131,9 @@ def delete_item_shopping_cart():
                 print("            *** Invalid quantity entered. Please try again. ***")
         else:
             print(f"\n            *** {r_item} not found in the shopping cart. ***")
+    else:
+        print(f"\n            *** Shopping cart is empty. Nothing to remove. ***")
+
 
         press_enter_to_continue()
 

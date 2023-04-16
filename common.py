@@ -93,16 +93,16 @@ def get_order_keys():
     """
     selection = -1
     key_order_item = list(order_cart.keys())
-    prompt = f"Select item to remove [{key_order_item}]: "
+    prompt = f"Select item to remove. Options {key_order_item}"
     while True:
         selection_str = get_string(prompt, 1)
         try:
             selection = int(selection_str)
             if selection in order_cart:
                 return selection
-            print_message(f"Please select a valid menu item between [{key_order_item}].")
+            print_message(f"Please select a valid item. Options {key_order_item}:")
         except ValueError:
-            print_message(f"The selection: '{selection_str}' is invalid integer, please enter an integer between [{key_order_item}].")
+            print_message(f"The selection: '{selection_str}' is invalid option. Options: {key_order_item}.")
 
 def get_quantity(prompt):
     """

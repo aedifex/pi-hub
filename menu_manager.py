@@ -105,7 +105,7 @@ def main_loop(cmd_items):
     user_name = get_string("Please enter your name", 4)
     while True:
         # First print the menu for this version
-        print_message("**************************************************************")
+        print_message("\n**************************************************************")
         print_message("*"*22+" SELECT AN OPTION "+ "*"*22)
         print_cmd_items(cmd_items) 
         # Get user Selection
