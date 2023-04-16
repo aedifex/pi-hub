@@ -49,7 +49,7 @@ menu_items = [
         "PrepTime": 8,
         "DiscountString": "if ordered with a Soup",
         "discountpair": ["Soup"],
-        "discountquantity": 5
+        "discountquantity": 0
     },
     {
         "Name": "Soup",
