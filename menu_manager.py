@@ -15,12 +15,14 @@ from common import press_enter_to_continue
 
 from data_model import food_menu
 from data_model import user_name
+from data_model import order_cart
 
 
 from order_manager import select_food
-from order_manager import display_shoppihg_cart
+from order_manager import display_shopping_cart
 from order_manager import clear_shopping_cart
 from order_manager import check_out
+from order_manager import delete_item_shopping_cart
 
 """
 cmd_items is a list and contains the list of command menus
@@ -32,7 +34,8 @@ cmd_items = [
             "3 - Clear Shopping Cart",
             "4 - Select Food",
             "5 - Check Out",
-            "6 - Exit without ordering"
+            "6 - Exit without ordering",
+            "7 - Remove Item from Shopping Cart"
     ]
 
 
@@ -134,7 +137,7 @@ def process_command(selection):
         print_restaurant_menu()
         press_enter_to_continue()
     elif selection == 2:
-        display_shoppihg_cart()
+        display_shopping_cart()
     elif selection == 3:
         clear_shopping_cart()
     elif selection == 4:
@@ -143,5 +146,9 @@ def process_command(selection):
         check_out()
     elif selection == 6:
         return "Exit"
+    elif selection == 7:
+        delete_item_shopping_cart()
+
+            
 
     return ""
