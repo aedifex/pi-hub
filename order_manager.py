@@ -81,7 +81,7 @@ def clear_shopping_cart():
 
         Returns: None
     """
-    yes_no = get_string("Are you sure you want to discard all items in the cart <y/N>", 1)
+    yes_no = get_string("Are you sure you want to discard all items in the cart <Y/N>", 1)
     if yes_no.upper() == 'YES' or yes_no.upper()[0] == 'Y':
         print_message("Clearing the cart ...")
         #order_cart = {}
