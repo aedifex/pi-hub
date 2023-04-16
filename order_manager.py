@@ -8,6 +8,7 @@ from common import get_cmd_selection
 from common import get_quantity
 from common import press_enter_to_continue
 from common import get_order_keys
+import sys
 
 def select_food():
     """
@@ -116,4 +117,69 @@ def check_out():
 
         Returns: None
     """
-    pass
+    calculate_total()
+
+def calculate_total():
+    """
+        calculate_total calculates total cost and stores data in recipt object
+
+        Paramters: None
+
+        Returns: A calculated recipt object.
+    """
+    # dicts of dicts
+    # recipt = {key: menu_items["Name"] for key in menu_items : {"Total" : 0, "Discount": 0}}
+    recipt = {"Sandwich": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0},
+              "Salad": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0},
+              "Soup": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0},
+              "Coffee/Tea": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0}}
+
+    print(order_cart) # {1: 1, 3: 3}
+    for key in order_cart.keys():
+        print(food_menu[key]["Name"])
+        # Keys our abstraction food_menu[key]["Name"]
+        # To another datastructure we use to tabulate total
+
+        # Calculate price before discount
+        recipt[food_menu[key]["Name"]]["Total_Before_Discount"] = order_cart[key] * food_menu[key]["Price"]
+
+        # !!!Calculate discount!!!
+        if order_cart[key] > food_menu[key]["discountquantity"]:
+            print(f'Discount for { food_menu[key]["Name"][0].lower() + food_menu[key]["Name"][1:] } is: {food_menu[key]["Discount"]}%')
+            # Calculate price after discount
+            discount = food_menu[key]["Discount"] / 100
+            print(f'Discount: {discount}')
+            recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (recipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
+        # Calc discount for different permuttations
+    final_recipt = format_recipt(recipt)
+
+    print(final_recipt)
+    sys.exit(0)
+
+def format_recipt(recipt):
+    """
+        format_recipt accepts a recipt object and formats the values using f-strings and format specifiers
+
+        Paramters: a recipt object (a dictionary of dictionaries)
+
+        Returns: None
+    """
+    # We "create" a recipt with processed values
+    for key in recipt.keys():
+        print(key)
+    
+    # user name isn't displaying??
+
+    formatted_recipt = f"""{' ' * 8}{'*' * 62}
+{' ' * 8}{"Chris"}, thanks for your order\n
+{' ' * 8}{'Items':<20}{'Qty':<10}Price
+{' ' * 8}{'-' * 35}
+
+{' ' * 8}{'-' * 35}
+{' ' * 8}{'Tax':<8}{1 * 100:>5.2f}%
+{' ' * 8}{'Total':<8}${12:>5.2f}\n
+{' ' * 8}{"4/23/22,":<8} your order will be ready in {"3pm"}
+{' ' * 8}{'*' * 62}
+"""
+
+    return formatted_recipt
