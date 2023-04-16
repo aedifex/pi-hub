@@ -81,9 +81,10 @@ def delete_item_shopping_cart():
     """
         delete_item_shopping_cart function removes an item in the shopping cart
 
-        delete_item_shopping_cart first calls the shopping cart to give the user a look of the cart
-        and then asks the user to select the food item.
+        delete_item_shopping_cart first validates if the dictionary is empty or not. If not empty, then it calls the shopping cart to give the user a look of the cart
+        and then asks the user to select the food item to remove from the shopping cart
         Finally it will remove the item from the cart.
+        If the dictionary order_cart is empty, then display a message.
 
         Parameters:
             None
