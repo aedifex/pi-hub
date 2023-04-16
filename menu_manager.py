@@ -138,6 +138,7 @@ def process_command(selection):
         press_enter_to_continue()
     elif selection == 2:
         display_shopping_cart()
+        press_enter_to_continue()
     elif selection == 3:
         clear_shopping_cart()
     elif selection == 4:

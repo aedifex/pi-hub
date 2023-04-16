@@ -7,6 +7,7 @@ from common import print_message
 from common import get_cmd_selection
 from common import get_quantity
 from common import press_enter_to_continue
+from common import get_order_keys
 
 def select_food():
     """
@@ -27,7 +28,10 @@ def select_food():
     print_restaurant_menu()
     food_item = get_cmd_selection(4)
     quantity  = get_quantity("Please enter the quantity")
-    order_cart[food_item] = quantity
+    if food_item in order_cart:
+        order_cart[food_item] += quantity
+    else:
+        order_cart[food_item] = quantity
 
 def display_shopping_cart():
     """
@@ -41,21 +45,21 @@ def display_shopping_cart():
 
     """
     # The format string used for printing the header and the menu item
-    format_str = "        | {:<11}| {:<9}| {:<7}| {:<18} |"
-    print("        "+"-"*55)
+    format_str = "        | {:<4}| {:<11}| {:<9}| {:<7}| {:<18} |"
+    print("        "+"-"*61)
     # The header for the menu
     print (format_str.format('Key', 'Item','Quantity','Price','Preparation Time'))
-    print("        "+"-"*55)
+    print("        "+"-"*61)
 
     for m_key, quantity in order_cart.items():
         m_item         = menu_items[m_key-1]['Name']
         m_price        = f"${menu_items[m_key-1]['Price']*quantity:4}"
         m_prep_time    = f"{menu_items[m_key-1]['PrepTime']*quantity:4} mins"
         print (format_str.format(m_key, m_item, quantity, m_price, m_prep_time))
-    print("        "+"-"*55)
+    print("        "+"-"*61)
     print_message("All Discounts will be applied at the checkout.")
-    press_enter_to_continue()
-        
+    #press_enter_to_continue()
+
 def clear_shopping_cart():
     """
         clear_shopping_cart function empties the shopping cart
@@ -88,13 +92,14 @@ def delete_item_shopping_cart():
             None
 
     """
-    print("\n            ***You are REMOVING item from your CART!***")
+    print("\n            *** You are REMOVING item from your CART! ***")
     display_shopping_cart()
     print("\n")
-    #r_item = get_cmd_selection(4)
-    r_item = int(input("Enter the KEY of the item you want to REMOVE from your shopping cart: "))
+    #write a code to get the keys of the order cart
+    r_item = get_order_keys()
+    #r_item = int(input("Enter the KEY of the item you want to REMOVE from your shopping cart: "))
     order_cart.pop(r_item)
-    print("\nThis is the updated Shopping Cart")
+    print("\n            *** Item is removed. Below is the UPDATED Shopping Cart ***")
     display_shopping_cart()
 
 

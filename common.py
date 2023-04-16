@@ -8,6 +8,7 @@ This module keeps all the common and utility functions.
 
 from data_model import food_menu
 from data_model import user_name
+from data_model import order_cart
 
 def print_message(message):
     """
@@ -74,6 +75,35 @@ def get_cmd_selection(num_items):
             print_message(f"Please select a valid menu item between [1, {num_items}].")
         except ValueError:
             print_message(f"The selection: '{selection_str}' is invalid integer, please enter an integer between [1, {num_items}].")
+
+def get_order_keys():
+    """
+    get_cmd_selection method gets the user command menu selection
+
+    get_cmd_selection method is an internal method and asks the user to
+    select a command menu option. If the user selects an option that is 
+    not within the available options it prints an error message
+    and asks the user to try again.
+
+    Parameters:
+        key_order_item (int): list of keys within the order cart
+
+    Returns:
+        selection (int) : The selected menu item
+
+    """
+    selection = -1
+    key_order_item = list(order_cart.keys())
+    prompt = f"Please select the KEYS of the items you want to REMOVE from the cart. USE options [{key_order_item}] ONLY!"
+    while True:
+        selection_str = get_string(prompt, 1)
+        try:
+            selection = int(selection_str)
+            if selection in order_cart:
+                return selection
+            print_message(f"Please select a valid menu item between [{key_order_item}].")
+        except ValueError:
+            print_message(f"The selection: '{selection_str}' is invalid integer, please enter an integer between [{key_order_item}].")
 
 def get_quantity(prompt):
     """
