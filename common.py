@@ -78,11 +78,10 @@ def get_cmd_selection(num_items):
 
 def get_order_keys():
     """
-    get_cmd_selection method gets the user command menu selection
+    get_order_keys method gets the user command menu selection
 
-    get_cmd_selection method is an internal method and asks the user to
-    select a command menu option. If the user selects an option that is 
-    not within the available options it prints an error message
+    get_order_keys method is an internal method and asks the user to
+    select a key as a selection or option within the order_cart
     and asks the user to try again.
 
     Parameters:
