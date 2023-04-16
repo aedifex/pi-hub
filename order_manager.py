@@ -1,6 +1,7 @@
 
 from data_model import menu_items
 from data_model import order_cart
+from data_model import food_menu
 from common import print_restaurant_menu
 from common import get_string
 from common import print_message
@@ -8,6 +9,8 @@ from common import get_cmd_selection
 from common import get_quantity
 from common import press_enter_to_continue
 from common import get_order_keys
+import sys
+import datetime
 
 def select_food():
     """
@@ -146,26 +149,25 @@ def calculate_total():
     """
     # dicts of dicts
     # recipt = {key: menu_items["Name"] for key in menu_items : {"Total" : 0, "Discount": 0}}
-    recipt = {"Sandwich": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0},
-              "Salad": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0},
-              "Soup": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0},
-              "Coffee/Tea": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0}}
+    recipt = {"Sandwich": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0, "Qty": 0},
+              "Salad": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0, "Qty": 0},
+              "Soup": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0, "Qty": 0},
+              "Coffee/Tea": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0, "Qty": 0}}
 
-    print(order_cart) # {1: 1, 3: 3}
     for key in order_cart.keys():
-        print(food_menu[key]["Name"])
         # Keys our abstraction food_menu[key]["Name"]
         # To another datastructure we use to tabulate total
 
         # Calculate price before discount
         recipt[food_menu[key]["Name"]]["Total_Before_Discount"] = order_cart[key] * food_menu[key]["Price"]
+        recipt[food_menu[key]["Name"]]["Qty"] = order_cart[key]
 
         # !!!Calculate discount!!!
         if order_cart[key] > food_menu[key]["discountquantity"]:
-            print(f'Discount for { food_menu[key]["Name"][0].lower() + food_menu[key]["Name"][1:] } is: {food_menu[key]["Discount"]}%')
+            # print(f'Discount for { food_menu[key]["Name"][0].lower() + food_menu[key]["Name"][1:] } is: {food_menu[key]["Discount"]}%')
             # Calculate price after discount
             discount = food_menu[key]["Discount"] / 100
-            print(f'Discount: {discount}')
+            # print(f'Discount: {discount}')
             recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (recipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
         # Calc discount for different permuttations
     final_recipt = format_recipt(recipt)
@@ -181,22 +183,45 @@ def format_recipt(recipt):
 
         Returns: None
     """
+    # Get the current date
+    now = datetime.datetime.now()
+
+    # Format the date as a string
+    date_str = now.strftime("%m/%d/%y")
+    # subtotal = sum(qty * price for name, qty, price in items)
+    # total = subtotal * (1 + tax)
     # We "create" a recipt with processed values
-    for key in recipt.keys():
-        print(key)
-    
     # user name isn't displaying??
+    # Calculate total
+    total = 0
+    # Calculate tax
+    tax = 0.0725
+
+    # Calculate order time
+    prep_time = 0
+    # we take the greatest time
+    for m_key, quantity in order_cart.items():
+        if  float(f"{menu_items[m_key-1]['PrepTime']*quantity:4}") > prep_time:
+            prep_time = float(f"{menu_items[m_key-1]['PrepTime']*quantity:4}")
 
     formatted_recipt = f"""{' ' * 8}{'*' * 62}
 {' ' * 8}{"Chris"}, thanks for your order\n
 {' ' * 8}{'Items':<20}{'Qty':<10}Price
-{' ' * 8}{'-' * 35}
+{' ' * 8}{'-' * 35}"""
 
+    for item in recipt.keys():
+       if recipt[item]["Total_After_Discount"] > 0:
+            total += recipt[item]["Total_After_Discount"]
+            # Apply tax
+            total -= total * tax
+            formatted_recipt += f"""
+{" " * 8}{item:<20}{recipt[item]["Qty"]:<10}{recipt[item]["Total_After_Discount"]:>5.2f}\n"""
+
+    formatted_recipt += f"""
 {' ' * 8}{'-' * 35}
-{' ' * 8}{'Tax':<8}{1 * 100:>5.2f}%
-{' ' * 8}{'Total':<8}${12:>5.2f}\n
-{' ' * 8}{"4/23/22,":<8} your order will be ready in {"3pm"}
+{' ' * 8}{'Tax':<8} {tax:>5.2f}%
+{' ' * 8}{'Total':<8}${total:>5.2f}\n
+{' ' * 8}{date_str+",":<8} your order will be ready in {prep_time} mins
 {' ' * 8}{'*' * 62}
 """
-
     return formatted_recipt
