@@ -57,8 +57,8 @@ def display_shopping_cart():
 
     for m_key, quantity in order_cart.items():
         m_item         = menu_items[m_key-1]['Name']
-        m_price        = f"${menu_items[m_key-1]['Price']:4}"
-        m_subtotal       = f"${menu_items[m_key-1]['Price']*quantity:4}"
+        m_price        = "{:>8}".format("${:.2f}".format(menu_items[m_key-1]['Price']))
+        m_subtotal     = "{:>8}".format("${:.2f}".format(menu_items[m_key-1]['Price']*quantity))
         m_prep_time    = f"{menu_items[m_key-1]['PrepTime']*quantity:4} mins"
         print (format_str.format(m_key, m_item, quantity, m_price, m_subtotal, m_prep_time))
     print("        "+"-"*75)
