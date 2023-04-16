@@ -30,12 +30,13 @@ that the Restaurant Application provides to the user.
 """
 cmd_items = [
             "1 - Display Food Menu",
-            "2 - Display Shopping Cart",
-            "3 - Clear Shopping Cart",
-            "4 - Select Food",
-            "5 - Check Out",
-            "6 - Exit without ordering",
-            "7 - Remove Item from Shopping Cart"
+            "2 - Select Food",
+            "3 - Display Shopping Cart",
+            "4 - Remove Item from Shopping Cart",
+            "5 - Clear Shopping Cart",
+            "6 - Check Out",
+            "7 - Exit without ordering"
+
     ]
 
 
@@ -137,18 +138,19 @@ def process_command(selection):
         print_restaurant_menu()
         press_enter_to_continue()
     elif selection == 2:
+        select_food()
+    elif selection == 3:
         display_shopping_cart()
         press_enter_to_continue()
-    elif selection == 3:
-        clear_shopping_cart()
     elif selection == 4:
-        select_food()
-    elif selection == 5:
-        check_out()
-    elif selection == 6:
-        return "Exit"
-    elif selection == 7:
         delete_item_shopping_cart()
+    elif selection == 5:
+        clear_shopping_cart()
+    elif selection == 6:
+        check_out()
+    elif selection == 7:
+        return "Exit"
+
 
             
 

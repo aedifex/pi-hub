@@ -92,15 +92,19 @@ def delete_item_shopping_cart():
             None
 
     """
-    print("\n            *** You are REMOVING item from your CART! ***")
-    display_shopping_cart()
-    print("\n")
-    #write a code to get the keys of the order cart
-    r_item = get_order_keys()
-    #r_item = int(input("Enter the KEY of the item you want to REMOVE from your shopping cart: "))
-    order_cart.pop(r_item)
-    print("\n            *** Item is removed. Below is the UPDATED Shopping Cart ***")
-    display_shopping_cart()
+    if len(order_cart) > 0:
+        print("\n            *** You are REMOVING item from your CART! ***")
+        display_shopping_cart()
+        print("\n")
+        _item = get_order_keys()
+        order_cart.pop(r_item)
+        print(f"            *** Item {r_item} is removed from the shopping cart. ***")
+        print("            *** Below is the UPDATED Shopping Cart. ***")
+        display_shopping_cart()
+    else:
+        print("\n        Shopping Cart is EMPTY! Nothing to remove.")
+        print("\n        Please ADD items to your shopping cart.\n")
+        press_enter_to_continue()
 
 
 def check_out():
