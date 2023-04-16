@@ -96,7 +96,7 @@ def delete_item_shopping_cart():
         print("\n            *** You are REMOVING item from your CART! ***")
         display_shopping_cart()
         print("\n")
-        _item = get_order_keys()
+        r_item = get_order_keys()
         order_cart.pop(r_item)
         print(f"            *** Item {r_item} is removed from the shopping cart. ***")
         print("            *** Below is the UPDATED Shopping Cart. ***")
