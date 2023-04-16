@@ -49,7 +49,7 @@ def display_shopping_cart():
     """
     print_message("\n        Shopping Cart")
     # The format string used for printing the header and the menu item
-    format_str = "        | {:<4}| {:<12}| {:<10}| {:<7}| {:<10}| {:<18} |"
+    format_str = "        | {:<4}| {:<12}| {:<10}| {:<8}| {:<10}| {:<18} |"
     print("        "+"-"*75)
     # The header for the menu
     print (format_str.format('Key', 'Item','Quantity', 'Price','Subtotal','Preparation Time'))
