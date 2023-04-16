@@ -162,65 +162,91 @@ def calculate_total():
         recipt[food_menu[key]["Name"]]["Total_Before_Discount"] = order_cart[key] * food_menu[key]["Price"]
         recipt[food_menu[key]["Name"]]["Qty"] = order_cart[key]
 
-        # !!!Calculate discount!!!
-        if order_cart[key] > food_menu[key]["discountquantity"]:
-            # print(f'Discount for { food_menu[key]["Name"][0].lower() + food_menu[key]["Name"][1:] } is: {food_menu[key]["Discount"]}%')
-            # Calculate price after discount
+        # Calculate Sandwich discount
+        if food_menu[key]["Name"] == "Sandwich":
+            if order_cart[key] > food_menu[key]["discountquantity"]:
+                # print(f'Discount for { food_menu[key]["Name"][0].lower() + food_menu[key]["Name"][1:] } is: {food_menu[key]["Discount"]}%')
+                # Calculate price after discount
+                discount = food_menu[key]["Discount"] / 100
+                recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (recipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
+            else:
+                recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"]
+
+
+        # Calculate Salad discount
+        if (recipt["Soup"]["Qty"] > 0) and (recipt["Salad"]["Qty"] > 0):
             discount = food_menu[key]["Discount"] / 100
-            # print(f'Discount: {discount}')
             recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (recipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
-        # Calc discount for different permuttations
+        else:
+            recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"]
+
+        # Calculate Soup (+ Sandwich + Salad) discount
+        if (recipt["Soup"]["Qty"] > 0) and (recipt["Salad"]["Qty"] > 0) and (recipt["Sandwich"]["Qty"] > 0):
+            discount = food_menu[key]["Discount"] / 100
+            recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (recipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
+        else:
+            recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"]
+
+        # Calculate Coffee discount (hint: there is no coffee discount!)
+        if food_menu[key]["Name"] == "Coffee/Tea":
+            recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"]
+
+    # Stores a formatted string with interpolated values
+    # representing a recipt of goods, including price, tax, and preparation time
     final_recipt = format_recipt(recipt)
 
+    # After displaying the final tally, terminate the program and return
+    # an exit code of zero.
     print(final_recipt)
     sys.exit(0)
 
 def format_recipt(recipt):
     """
-        format_recipt accepts a recipt object and formats the values using f-strings and format specifiers
+        format_recipt accepts a recipt object and formats data values using f-strings and format specifiers into a large string object for return
 
         Paramters: a recipt object (a dictionary of dictionaries)
 
-        Returns: None
+        Returns: a formatted string object with interpolated data values representing bill of goods
     """
     # Get the current date
     now = datetime.datetime.now()
-
     # Format the date as a string
     date_str = now.strftime("%m/%d/%y")
-    # subtotal = sum(qty * price for name, qty, price in items)
-    # total = subtotal * (1 + tax)
-    # We "create" a recipt with processed values
+
     # user name isn't displaying??
+
     # Calculate total
-    total = 0
+    total_cost = 0
     # Calculate tax
-    tax = 0.0725
+    california_tax = 0.0725
 
     # Calculate order time
     prep_time = 0
-    # we take the greatest time
+
+    # Calculate prep time - we're taking the longest prep time and assuming
+    # they can prep the other items in parallel.
     for m_key, quantity in order_cart.items():
         if  float(f"{menu_items[m_key-1]['PrepTime']*quantity:4}") > prep_time:
             prep_time = float(f"{menu_items[m_key-1]['PrepTime']*quantity:4}")
 
+    # We "create" a recipt with processed values and use lots of format specificer
     formatted_recipt = f"""{' ' * 8}{'*' * 62}
-{' ' * 8}{"Chris"}, thanks for your order\n
+{' ' * 8}{"Friend"}, thanks for your order\n
 {' ' * 8}{'Items':<20}{'Qty':<10}Price
 {' ' * 8}{'-' * 35}"""
 
     for item in recipt.keys():
        if recipt[item]["Total_After_Discount"] > 0:
-            total += recipt[item]["Total_After_Discount"]
+            total_cost += recipt[item]["Total_After_Discount"]
             # Apply tax
-            total -= total * tax
+            total_cost -= total_cost * california_tax
             formatted_recipt += f"""
 {" " * 8}{item:<20}{recipt[item]["Qty"]:<10}{recipt[item]["Total_After_Discount"]:>5.2f}\n"""
 
     formatted_recipt += f"""
 {' ' * 8}{'-' * 35}
-{' ' * 8}{'Tax':<8} {tax:>5.2f}%
-{' ' * 8}{'Total':<8}${total:>5.2f}\n
+{' ' * 8}{'Tax':<8} {california_tax:>5.2f}%
+{' ' * 8}{'Total':<8}${total_cost:>5.2f}\n
 {' ' * 8}{date_str+",":<8} your order will be ready in {prep_time} mins
 {' ' * 8}{'*' * 62}
 """
