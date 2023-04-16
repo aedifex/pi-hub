@@ -93,7 +93,7 @@ def get_order_keys():
     """
     selection = -1
     key_order_item = list(order_cart.keys())
-    prompt = f"Please select the KEYS of the items you want to REMOVE from the cart. USE options [{key_order_item}] ONLY!"
+    prompt = f"Select item to remove [{key_order_item}]: "
     while True:
         selection_str = get_string(prompt, 1)
         try:
