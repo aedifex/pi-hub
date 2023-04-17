@@ -1,3 +1,10 @@
+"""
+Module: order_manager.py
+Authors: chris, clarence, pals
+
+This module manages order logic and several utility functions
+
+"""
 
 from data_model import menu_items
 from data_model import order_cart
@@ -34,10 +41,11 @@ def select_food():
     food_item = get_cmd_selection(4)
     quantity  = get_quantity("Please enter the quantity")
 
-    #validates and ensure the quantity is greater than zero
+    # Validates and ensure the item quantity is greater than zero
     if quantity <= 0:
         print("Invalid quantity. Enter a valid quantity.")
     else:
+        # Check if item is in card, if so, update quantity
         if food_item in order_cart:
             order_cart[food_item] += quantity
         else:
@@ -65,6 +73,8 @@ def display_shopping_cart():
     # Sorting the list of items in the cart by m_key
     sorted_items = sorted(order_cart.items(), key=lambda x: x[0])
 
+    # Iterate through a data structure representing ordered items, use format specifiers
+    # to help structure the output
     for m_key, quantity in sorted_items:
         m_item         = menu_items[m_key-1]['Name']
         m_price        = "{:>8}".format("${:.2f}".format(menu_items[m_key-1]['Price']))
@@ -73,7 +83,6 @@ def display_shopping_cart():
         print (format_str.format(m_key, m_item, quantity, m_price, m_subtotal, m_prep_time))
     print("        "+"-"*76)
     print_message("      *** All Discounts will be applied at the checkout ***.\n")
-    #press_enter_to_continue()
 
 def clear_shopping_cart():
     """
@@ -83,6 +92,7 @@ def clear_shopping_cart():
 
         Returns: None
     """
+    # The nuclear option - we call a helper function which clears cart contents
     yes_no = get_string("Are you sure you want to discard all items in the cart <Y/N>", 1)
     if yes_no.upper() == 'YES' or yes_no.upper()[0] == 'Y':
         print_message("Clearing the cart ...")
@@ -138,85 +148,82 @@ def delete_item_shopping_cart():
 
         press_enter_to_continue()
 
-
-
-
 def check_out():
     """
         check_out function computes the time and bill for the order
 
-        Paramters: None
+        Parameters: None
 
         Returns: None
     """
+    # Calculate bill
     calculate_total()
 
 def calculate_total():
     """
-        calculate_total calculates total cost and stores data in recipt object
+        calculate_total calculates total cost and stores data in receipt object
 
-        Paramters: None
+        Parameters: None
 
-        Returns: A calculated recipt object.
+        Returns: A calculated receipt object.
     """
-    # dicts of dicts
-    # recipt = {key: menu_items["Name"] for key in menu_items : {"Total" : 0, "Discount": 0}}
-    recipt = {"Sandwich": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0, "Qty": 0},
+    # A data structure we use to tabulate the total, including pre / post discount cost, and quantity.
+    receipt = {"Sandwich": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0, "Qty": 0},
               "Salad": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0, "Qty": 0},
               "Soup": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0, "Qty": 0},
               "Coffee/Tea": {"Total_Before_Discount" : 0, "Total_After_Discount" : 0, "Discount": 0, "Qty": 0}}
 
+    # We iterate over our "order" and populate the receipt accordingly
+    # there is additional logic that calculates discount
     for key in order_cart.keys():
         # Keys our abstraction food_menu[key]["Name"]
-        # To another datastructure we use to tabulate total
-
+        # To another data structure (receipt) we use to tabulate total
         # Calculate price before discount
-        recipt[food_menu[key]["Name"]]["Total_Before_Discount"] = order_cart[key] * food_menu[key]["Price"]
-        recipt[food_menu[key]["Name"]]["Qty"] = order_cart[key]
+        receipt[food_menu[key]["Name"]]["Total_Before_Discount"] = order_cart[key] * food_menu[key]["Price"]
+        receipt[food_menu[key]["Name"]]["Qty"] = order_cart[key]
 
         # Calculate Sandwich discount
         if food_menu[key]["Name"] == "Sandwich":
             if order_cart[key] > food_menu[key]["discountquantity"]:
-                # print(f'Discount for { food_menu[key]["Name"][0].lower() + food_menu[key]["Name"][1:] } is: {food_menu[key]["Discount"]}%')
                 # Calculate price after discount
                 discount = food_menu[key]["Discount"] / 100
-                recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (recipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
+                receipt[food_menu[key]["Name"]]["Total_After_Discount"] = receipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (receipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
             else:
-                recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"]
+                receipt[food_menu[key]["Name"]]["Total_After_Discount"] = receipt[food_menu[key]["Name"]]["Total_Before_Discount"]
 
 
         # Calculate Salad discount
-        if (recipt["Soup"]["Qty"] > 0) and (recipt["Salad"]["Qty"] > 0):
+        if (receipt["Soup"]["Qty"] > 0) and (receipt["Salad"]["Qty"] > 0):
             discount = food_menu[key]["Discount"] / 100
-            recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (recipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
+            receipt[food_menu[key]["Name"]]["Total_After_Discount"] = receipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (receipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
         else:
-            recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"]
+            receipt[food_menu[key]["Name"]]["Total_After_Discount"] = receipt[food_menu[key]["Name"]]["Total_Before_Discount"]
 
         # Calculate Soup (+ Sandwich + Salad) discount
-        if (recipt["Soup"]["Qty"] > 0) and (recipt["Salad"]["Qty"] > 0) and (recipt["Sandwich"]["Qty"] > 0):
+        if (receipt["Soup"]["Qty"] > 0) and (receipt["Salad"]["Qty"] > 0) and (receipt["Sandwich"]["Qty"] > 0):
             discount = food_menu[key]["Discount"] / 100
-            recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (recipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
+            receipt[food_menu[key]["Name"]]["Total_After_Discount"] = receipt[food_menu[key]["Name"]]["Total_Before_Discount"] - (receipt[food_menu[key]["Name"]]["Total_Before_Discount"] * discount)
         else:
-            recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"]
+            receipt[food_menu[key]["Name"]]["Total_After_Discount"] = receipt[food_menu[key]["Name"]]["Total_Before_Discount"]
 
         # Calculate Coffee discount (hint: there is no coffee discount!)
         if food_menu[key]["Name"] == "Coffee/Tea":
-            recipt[food_menu[key]["Name"]]["Total_After_Discount"] = recipt[food_menu[key]["Name"]]["Total_Before_Discount"]
+            receipt[food_menu[key]["Name"]]["Total_After_Discount"] = receipt[food_menu[key]["Name"]]["Total_Before_Discount"]
 
     # Stores a formatted string with interpolated values
-    # representing a recipt of goods, including price, tax, and preparation time
-    final_recipt = format_recipt(recipt)
+    # representing a receipt of goods, including price, tax, and preparation time
+    final_receipt = format_receipt(receipt)
 
     # After displaying the final tally, terminate the program and return
     # an exit code of zero.
-    print(final_recipt)
+    print(final_receipt)
     sys.exit(0)
 
-def format_recipt(recipt):
+def format_receipt(receipt):
     """
-        format_recipt accepts a recipt object and formats data values using f-strings and format specifiers into a large string object for return
+        format_receipt accepts a receipt object and formats data values using f-strings and format specifiers into a large string object for return
 
-        Paramters: a recipt object (a dictionary of dictionaries)
+        Parameters: a receipt object (a dictionary of dictionaries)
 
         Returns: a formatted string object with interpolated data values representing bill of goods
     """
@@ -241,25 +248,25 @@ def format_recipt(recipt):
         if  float(f"{menu_items[m_key-1]['PrepTime']*quantity:4}") > prep_time:
             prep_time = float(f"{menu_items[m_key-1]['PrepTime']*quantity:4}")
 
-    # We "create" a recipt with processed values and use lots of format specificer
-    formatted_recipt = f"""{' ' * 8}{'*' * 62}
+    # We "create" a receipt with processed values and use lots of format specificer
+    formatted_receipt = f"""{' ' * 8}{'*' * 62}
 {' ' * 8}{get_user_name()}, thanks for your order\n
 {' ' * 8}{'Items':<20}{'Qty':<10}Price
 {' ' * 8}{'-' * 35}"""
 
-    for item in recipt.keys():
-       if recipt[item]["Total_After_Discount"] > 0:
-            total_cost += recipt[item]["Total_After_Discount"]
+    for item in receipt.keys():
+       if receipt[item]["Total_After_Discount"] > 0:
+            total_cost += receipt[item]["Total_After_Discount"]
             # Apply tax
             total_cost -= total_cost * california_tax
-            formatted_recipt += f"""
-{" " * 8}{item:<20}{recipt[item]["Qty"]:<10}{recipt[item]["Total_After_Discount"]:>5.2f}\n"""
+            formatted_receipt += f"""
+{" " * 8}{item:<20}{receipt[item]["Qty"]:<10}{receipt[item]["Total_After_Discount"]:>5.2f}\n"""
 
-    formatted_recipt += f"""
+    formatted_receipt += f"""
 {' ' * 8}{'-' * 35}
 {' ' * 8}{'Tax':<8} {california_tax:>5.2f}%
 {' ' * 8}{'Total':<8}${total_cost:>5.2f}\n
 {' ' * 8}{date_str+",":<8} your order will be ready in {prep_time} mins
 {' ' * 8}{'*' * 62}
 """
-    return formatted_recipt
+    return formatted_receipt
