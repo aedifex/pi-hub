@@ -86,3 +86,7 @@ order_cart = {
 
 # User Name
 user_name = ""
+
+def get_user_name():
+  global user_name
+  return user_name

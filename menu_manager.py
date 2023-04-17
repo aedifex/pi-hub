@@ -14,8 +14,9 @@ from common import print_restaurant_menu
 from common import press_enter_to_continue
 
 from data_model import food_menu
-from data_model import user_name
+# from data_model import user_name
 from data_model import order_cart
+import data_model
 
 
 from order_manager import select_food
@@ -38,7 +39,6 @@ cmd_items = [
             "7 - Exit without ordering"
 
     ]
-
 
 def print_restaurant_banner():
     """
@@ -102,7 +102,9 @@ def main_loop(cmd_items):
     """
     # Print the banner once
     print_restaurant_banner()
-    user_name = get_string("Please enter your name", 4)
+    # user_name = get_string("Please enter your name", 4)
+    # global user_name
+    data_model.user_name = input(" "*8 + "Please enter your name: ")
     while True:
         # First print the menu for this version
         print_message("\n**************************************************************")

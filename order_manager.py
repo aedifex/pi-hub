@@ -2,6 +2,8 @@
 from data_model import menu_items
 from data_model import order_cart
 from data_model import food_menu
+from data_model import user_name
+from data_model import get_user_name
 from common import print_restaurant_menu
 from common import get_string
 from common import print_message
@@ -84,7 +86,6 @@ def clear_shopping_cart():
     yes_no = get_string("Are you sure you want to discard all items in the cart <Y/N>", 1)
     if yes_no.upper() == 'YES' or yes_no.upper()[0] == 'Y':
         print_message("Clearing the cart ...")
-        #order_cart = {}
         order_cart.clear()
     else:
         print_message("Cart is not cleared, please continue.")
@@ -242,7 +243,7 @@ def format_recipt(recipt):
 
     # We "create" a recipt with processed values and use lots of format specificer
     formatted_recipt = f"""{' ' * 8}{'*' * 62}
-{' ' * 8}{"Friend"}, thanks for your order\n
+{' ' * 8}{get_user_name()}, thanks for your order\n
 {' ' * 8}{'Items':<20}{'Qty':<10}Price
 {' ' * 8}{'-' * 35}"""
 
